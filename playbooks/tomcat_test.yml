@@ -1,0 +1,93 @@
+---
+- name: deployear java, tomcat y la aplicación
+  hosts: redhat
+  user: sysadmin
+  become: yes
+  vars:
+    app_dir: /usr/local/tomcat/webapps
+    config_dir: /opt/config
+    dir: /home/sysadmin/tomcat
+
+  tasks:
+
+  - name: instalar jdk de java
+    ansible.builtin.dnf:
+      name: java-1.8.0-openjdk
+      state: latest
+
+  - name: Crear carpeta para archivos
+    ansible.builtin.file:
+      path: '{{dir}}'
+      state: directory
+
+  - name: checkear que no exista la carpeta
+    ansible.builtin.stat:
+      path: '{{dir}}/apache-tomcat-10.1.26'
+    register: file
+
+  - name: descargar paquete de tomcat desde el repositorio original
+    ansible.builtin.get_url:
+      url: https://dlcdn.apache.org/tomcat/tomcat-10/v10.1.26/bin/apache-tomcat-10.1.26.tar.gz
+      dest: '{{dir}}'
+    when: file.stat.exists == false
+
+  - name: Instalar comandos para extraer el archivo
+    ansible.builtin.yum:
+      name: tar
+      state: latest
+
+  - name: descomprimir el paquete descargado
+    ansible.builtin.unarchive:
+      src: '{{dir}}/apache-tomcat-10.1.26.tar.gz'
+      dest: '{{dir}}'
+      remote_src: yes
+
+  - name: checkear que no exista la carpeta
+    ansible.builtin.stat:
+      path: /usr/local/tomcat
+    register: tomcat_stat
+  
+  - name: Mover y renombrar la carpeta de tomcat a la ubicación por defecto
+    ansible.builtin.command:
+      cmd: mv '{{dir}}/apache-tomcat-10.1.26' /usr/local/tomcat
+    when: tomcat_stat.stat.exists == false
+    
+  - name: copiar archivo de configuracion plantilla tomcat.service
+    ansible.builtin.copy:
+      src: /home/ansible/obligatorio/tomcat.service
+      dest: /etc/systemd/system/
+
+  - name: crear carpeta de tomcat que alojará el archivo de configuración de mi aplicación
+    ansible.builtin.file:
+      path: '{{config_dir}}'
+      state: directory
+
+  - name: copiar archivo de configuración a la carpeta
+    ansible.builtin.copy:
+      src: /home/ansible/obligatorio/app.properties
+      dest: '{{config_dir}}'
+
+  - name: copiar app todo.war desde el controlador al servidor con tomcat
+    ansible.builtin.copy:
+      src: /home/ansible/obligatorio/todo.war
+      dest: '{{app_dir}}'
+
+  - name: Habilitar e iniciar servicio Tomcat
+    ansible.builtin.systemd_service:
+      name: tomcat
+      state: started
+      daemon_reload: true
+      enabled: true
+
+  - name: Habilitar tráfico a través del puerto 8080 tomcat
+    ansible.posix.firewalld:
+      port: 8080/tcp
+      permanent: true
+      state: enabled
+
+  - name: Recargar el firewall
+    ansible.builtin.systemd_service:
+      name: firewalld
+      state: reloaded
+
+...

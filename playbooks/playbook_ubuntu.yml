@@ -1,0 +1,19 @@
+---
+- name: instalar mysql y configurar base de datos
+  hosts: ubuntu
+  user: sysadmin
+  become: yes
+
+  tasks:
+  
+  - name: instalar mysql service
+    ansible.builtin.dnf:
+      name: mariadb-server
+      state: latest
+
+  - name: asegurar mariadb con script mysql_secure_installation
+    ansible.builtin.script:
+      cmd: mysql_secure_installation
+
+...
+
