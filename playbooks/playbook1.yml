@@ -4,6 +4,7 @@
   user: sysadmin
   become: yes
   vars:
+    ansible_python_interpreter: /usr/bin/python3.12
     app_dir: /opt/tomcat/webapps
     config_dir: /opt/config
     tomcat_version: 9.0.91
@@ -54,7 +55,7 @@
     when: file.stat.exists == false
 
   - name: Instalar comandos para extraer el archivo
-    ansible.builtin.yum:
+    ansible.builtin.dnf:
       name: tar
       state: latest
 
