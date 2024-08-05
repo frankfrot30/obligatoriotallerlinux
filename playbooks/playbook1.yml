@@ -6,6 +6,9 @@
   vars:
     app_dir: /opt/tomcat/webapps
     config_dir: /opt/config
+    tomcat_version: 9.0.91
+    tomcat_version_splitted: "{{ tomcat_version.split('.') }}"
+    tomcat_major_version: "{{ tomcat_version_splitted[0] }}"
 
   tasks:
 
@@ -21,7 +24,7 @@
       state: latest
     when: ansible_os_family=='Debian'
 
-  - name: instalar jdk de java en distribuciones Red Hat
+  - name: Instalar jdk de java en distribuciones Red Hat
     ansible.builtin.dnf:
       name: java
       state: latest
@@ -33,20 +36,20 @@
       state: latest
     when: ansible_os_family=='Debian'
   
-  - name: Crear usuario para tomcat
+  - name: Crear usuario para Tomcat
     ansible.builtin.user:
       name: tomcat
       shell: /sbin/nologin
       create_home: false
 
-  - name: checkear que no exista el archivo de instalación de tomcat
+  - name: Checkear que no exista el archivo de instalación de tomcat
     ansible.builtin.stat:
-      path: /tmp/apache-tomcat-9.0.91.tar.gz
+      path: /tmp/apache-tomcat-{{tomcat_version}}.tar.gz
     register: file
 
-  - name: descargar paquete de tomcat desde el repositorio original
+  - name: Descargar paquete de instalación de Tomcat desde el repositorio original
     ansible.builtin.get_url:
-      url: https://dlcdn.apache.org/tomcat/tomcat-9/v9.0.91/bin/apache-tomcat-9.0.91.tar.gz
+      url: https://dlcdn.apache.org/tomcat/tomcat-{{tomcat_major_version}}/v{{tomcat_version}}/bin/apache-tomcat-{{tomcat_version}}.tar.gz
       dest: /tmp
     when: file.stat.exists == false
 
@@ -55,7 +58,7 @@
       name: tar
       state: latest
 
-  - name: checkear que no exista la carpeta
+  - name: Checkear que no exista la carpeta donde van los archivos de instalación
     ansible.builtin.stat:
       path: /opt/tomcat
     register: tomcat
@@ -66,14 +69,14 @@
       state: directory
     when: tomcat.stat.exists==false  
   
-  - name: descomprimir el paquete descargado
+  - name: Descomprimir el paquete descargado
     ansible.builtin.unarchive:
-      src: '/tmp/apache-tomcat-9.0.91.tar.gz'
+      src: /tmp/apache-tomcat-{{tomcat_version}}.tar.gz
       dest: /opt/tomcat
       remote_src: yes
       extra_opts: ['--strip-components=1',]
   
-  - name: Cambiar permisos de la carpeta de tomcat
+  - name: Cambiar permisos de la carpeta de Tomcat
     ansible.builtin.file:
       path: /opt/tomcat
       state: directory
@@ -82,22 +85,22 @@
       group: tomcat
       mode: '755'
      
-  - name: copiar archivo de configuracion plantilla tomcat.service
+  - name: Copiar archivo de configuracion plantilla tomcat.service para Systemd
     ansible.builtin.copy:
       src: /home/ansible/obligatorio/tomcat.service
       dest: /etc/systemd/system/
 
-  - name: crear carpeta de tomcat que alojará el archivo de configuración de mi aplicación
+  - name: Crear carpeta de tomcat que alojará el archivo de configuración de mi aplicación
     ansible.builtin.file:
       path: '{{config_dir}}'
       state: directory
 
-  - name: copiar archivo de configuración a la carpeta
+  - name: Copiar archivo de configuración a la carpeta
     ansible.builtin.copy:
       src: /home/ansible/obligatorio/app.properties
       dest: '{{config_dir}}'
 
-  - name: copiar app todo.war desde el controlador al servidor con tomcat
+  - name: Copiar app todo.war desde el controlador al servidor con tomcat
     ansible.builtin.copy:
       src: /home/ansible/obligatorio/todo.war
       dest: '{{app_dir}}'
@@ -105,7 +108,7 @@
   - name: Habilitar e iniciar servicio Tomcat
     ansible.builtin.systemd_service:
       name: tomcat
-      state: started
+      state: restarted
       daemon_reload: true
       enabled: true
 
