@@ -9,6 +9,7 @@
     tomcat_version: 9.0.91
     tomcat_version_splitted: "{{ tomcat_version.split('.') }}"
     tomcat_major_version: "{{ tomcat_version_splitted[0] }}"
+    ansible_python_interpreter: auto_silent
 
   tasks:
 
