@@ -40,7 +40,6 @@
         'Remove test database and access to it': 'y'
         'Reload privilege tables now': 'y'
       timeout: 1
-    become: no
 
   - name: Instalar pymysql requerido para interacción con base de datos
     ansible.builtin.apt:

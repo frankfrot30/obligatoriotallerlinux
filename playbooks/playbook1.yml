@@ -6,7 +6,7 @@
   vars:
     app_dir: /opt/tomcat/webapps
     config_dir: /opt/config
-    tomcat_version: 9.0.91 #checkear última versión disponible de tomcat
+    tomcat_version: 9.0.93 #checkear última versión disponible de tomcat
     tomcat_version_splitted: "{{ tomcat_version.split('.') }}"
     tomcat_major_version: "{{ tomcat_version_splitted[0] }}"
     ansible_python_interpreter: auto_silent
