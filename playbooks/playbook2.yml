@@ -41,10 +41,17 @@
         'Reload privilege tables now': 'y'
       timeout: 1
 
-  - name: Instalar pymysql requerido para interacción con base de datos
+  - name: Instalar pymysql requerido para interacción con base de datos (Debian)
     ansible.builtin.apt:
       name: python3-pymysql
       state: present
+    when: ansible_os_family=='Debian'
+  
+  - name: Instalar pymysql requerido para interacción con base de datos (Debian)
+    ansible.builtin.dnf:
+      name: python3-pymysql
+      state: present
+    when: ansible_os_family=='RedHat'
   
   - name: Permitir acceso a la base de datos desde cualquier ip
     ansible.builtin.lineinfile:
