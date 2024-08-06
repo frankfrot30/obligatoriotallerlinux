@@ -2,7 +2,7 @@
 
 #Contar con un servidor linux que tenga un usuario (no ROOT) con permisos de administrador
 
-#Instalar ansible en dicho servidor: Sudo dnf install pipx; pipx install --include-deps ansible; pipx ensurepath; pipx inject ansible argcomplete; pipx inject ansible ansible-lint; activate-global-python-argcomplete3 --user
+#Instalar ansible en dicho servidor: sudo dnf install pipx; pipx install --include-deps ansible; pipx ensurepath; pipx inject ansible argcomplete; pipx inject ansible ansible-lint; activate-global-python-argcomplete3 --user
 
 #Copiar la clave pública a los servidores remotos: ssh-copy-id usuario@servidor_remoto
 
