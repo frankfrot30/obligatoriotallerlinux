@@ -4,7 +4,6 @@
   user: sysadmin
   become: yes
   vars:
-    ansible_python_interpreter: /usr/bin/python3.12
     app_dir: /opt/tomcat/webapps
     config_dir: /opt/config
     tomcat_version: 9.0.91
@@ -37,6 +36,17 @@
       state: latest
     when: ansible_os_family=='Debian'
   
+  - name: copiar conector sql
+    ansible.builtin.copy:
+      src: /home/ansible/obligatorio/mysql-connector-j-9.0.0-1.el9.noarch.rpm
+      dest: /tmp
+
+  - name: instalar conector sql
+    ansible.builtin.dnf:
+      name: /tmp/mysql-connector-j-9.0.0-1.el9.noarch.rpm
+      state: present
+      disable_gpg_check: true
+    
   - name: Crear usuario para Tomcat
     ansible.builtin.user:
       name: tomcat
