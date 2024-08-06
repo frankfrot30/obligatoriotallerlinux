@@ -6,7 +6,7 @@
   vars:
     app_dir: /opt/tomcat/webapps
     config_dir: /opt/config
-    tomcat_version: 9.0.91
+    tomcat_version: 9.0.91 #checkear última versión disponible de tomcat
     tomcat_version_splitted: "{{ tomcat_version.split('.') }}"
     tomcat_major_version: "{{ tomcat_version_splitted[0] }}"
     ansible_python_interpreter: auto_silent
@@ -36,18 +36,7 @@
       name: default-jre, default-jdk
       state: latest
     when: ansible_os_family=='Debian'
-  
-  - name: copiar conector sql
-    ansible.builtin.copy:
-      src: /home/ansible/obligatorio/mysql-connector-j-9.0.0-1.el9.noarch.rpm
-      dest: /tmp
-
-  - name: instalar conector sql
-    ansible.builtin.dnf:
-      name: /tmp/mysql-connector-j-9.0.0-1.el9.noarch.rpm
-      state: present
-      disable_gpg_check: true
-    
+     
   - name: Crear usuario para Tomcat
     ansible.builtin.user:
       name: tomcat
@@ -99,7 +88,7 @@
      
   - name: Copiar archivo de configuracion plantilla tomcat.service para Systemd
     ansible.builtin.copy:
-      src: /home/ansible/obligatorio/tomcat.service
+      src: ./files/tomcat.service
       dest: /etc/systemd/system/
 
   - name: Crear carpeta de tomcat que alojará el archivo de configuración de mi aplicación
@@ -109,12 +98,12 @@
 
   - name: Copiar archivo de configuración a la carpeta
     ansible.builtin.copy:
-      src: /home/ansible/obligatorio/app.properties
+      src: ./files/app.properties
       dest: '{{config_dir}}'
 
   - name: Copiar app todo.war desde el controlador al servidor con tomcat
     ansible.builtin.copy:
-      src: /home/ansible/obligatorio/todo.war
+      src: ./files/todo.war
       dest: '{{app_dir}}'
 
   - name: Habilitar e iniciar servicio Tomcat
