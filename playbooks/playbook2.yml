@@ -58,6 +58,11 @@
       path: /etc/mysql/mariadb.conf.d/50-server.cnf
       line: bind-address            = 0.0.0.0
       regexp: '^bind-address'
+  
+  - name: Reiniciar mariadb
+    ansible.builtin.systemd_service:
+      name: mariadb
+      state: restarted
 
   - name: Crear base de datos todo
     community.mysql.mysql_db:
