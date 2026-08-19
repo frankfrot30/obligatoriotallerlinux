@@ -44,9 +44,12 @@
       path: /tmp/apache-tomcat-{{tomcat_version}}.tar.gz
     register: file
 
-  - name: Descargar paquete de instalación de Tomcat desde el repositorio original
+  - name: Descargar paquete de instalación de Tomcat desde el archivo histórico de Apache
     ansible.builtin.get_url:
-      url: https://dlcdn.apache.org/tomcat/tomcat-{{tomcat_major_version}}/v{{tomcat_version}}/bin/apache-tomcat-{{tomcat_version}}.tar.gz
+      # archive.apache.org (a diferencia de dlcdn.apache.org) nunca purga
+      # versiones viejas, así que una vez fijada tomcat_version no vuelve a
+      # dar 404 cuando salga una versión más nueva.
+      url: https://archive.apache.org/dist/tomcat/tomcat-{{tomcat_major_version}}/v{{tomcat_version}}/bin/apache-tomcat-{{tomcat_version}}.tar.gz
       dest: /tmp
     when: file.stat.exists == false
 

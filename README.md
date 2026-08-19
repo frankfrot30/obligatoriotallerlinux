@@ -15,7 +15,8 @@ La app queda accesible en `http://<ip_rh1>:8080/todo`. No hay ningún usuario pr
 ├── ansible.cfg                    # Config de Ansible (host_key_checking off, útil para VMs efímeras)
 ├── requirements.yml                # Collections de Ansible necesarias
 ├── inventory/
-│   └── hosts.yml                  # IPs de los servidores destino (grupos [ubuntu] y [redhat])
+│   ├── hosts.yml.example          # Template trackeado, IPs vacías (grupos [ubuntu] y [redhat])
+│   └── hosts.yml                  # Copia real que lee Ansible, con las IPs (gitignored)
 ├── playbooks/
 │   ├── playbook1.yml               # Java + Tomcat + app (host: redhat)
 │   ├── playbook2.yml               # MariaDB + base de datos (host: ubuntu)
@@ -25,6 +26,7 @@ La app queda accesible en `http://<ip_rh1>:8080/todo`. No hay ningún usuario pr
 │   │       ├── vars.yml            # Variables parametrizables (usuario, puertos, versión de Tomcat, nombres de BD)
 │   │       └── vault.yml           # Copia real que lee Ansible, generada y encriptada localmente (gitignored)
 │   ├── files/
+│   │   ├── todo.war                # Aplicación empaquetada, se copia tal cual a rh1
 │   │   └── tomcat.service          # Unit de systemd para Tomcat
 │   └── templates/
 │       └── app.properties.j2       # Config de conexión a la BD (IP/puerto/credenciales desde las variables)
@@ -92,7 +94,7 @@ Con un solo comando:
 
 1. Levanta `ub1` y `rh1`, crea en ambas el usuario `sysadmin` con sudo sin contraseña.
 2. Genera un par de claves SSH propio del proyecto (`.vagrant_ssh/`, no toca tu `~/.ssh` personal) y lo instala en `ub1`/`rh1`.
-3. Regenera `inventory/hosts.yml` con las IPs fijas de las VMs.
+3. Regenera `inventory/hosts.yml` (gitignored) con las IPs fijas de las VMs.
 4. Genera una vault-password aleatoria propia en `.vault_pass.txt`.
 5. Levanta una tercera VM, `controller`, con Ansible instalado, le copia la clave privada y la vault-password, **genera `playbooks/group_vars/all/vault.yml` a partir de `vault_defaults.yml` y lo encripta** con esa password (ver "Variables parametrizables"), instala las collections de `requirements.yml`, y **corre `playbook2.yml` y `playbook1.yml` automáticamente** (la base primero, la app después) contra `ub1`/`rh1`.
 
@@ -102,7 +104,11 @@ Para reaplicar los playbooks después de editarlos: `vagrant provision`. Para en
 
 1. Contar con los dos servidores (uno Ubuntu, uno familia Red Hat), cada uno con un usuario `sysadmin` no-root con permisos de administrador.
 2. Copiar tu clave pública a cada servidor: `ssh-copy-id sysadmin@servidor_remoto`
-3. Completar `inventory/hosts.yml` con la IP de cada servidor:
+3. Copiar `inventory/hosts.yml.example` a `inventory/hosts.yml` (no existe en el repo, se genera) y completar las IPs:
+
+   ```bash
+   cp inventory/hosts.yml.example inventory/hosts.yml
+   ```
 
    ```ini
    [ubuntu]

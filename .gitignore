@@ -2,4 +2,5 @@
 .vagrant_ssh/
 .vault_pass.txt
 playbooks/group_vars/all/vault.yml
+inventory/hosts.yml
 *.log

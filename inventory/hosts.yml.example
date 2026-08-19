@@ -1,0 +1,14 @@
+# Template trackeado por git. Con la Opción A (Vagrant) no hace falta
+# tocar esto: "vagrant up" genera inventory/hosts.yml solo (gitignored,
+# con las IPs de las VMs locales).
+#
+# Con la Opción B (servidores propios): copiá este archivo a
+# inventory/hosts.yml y completá las IPs.
+#   cp inventory/hosts.yml.example inventory/hosts.yml
+
+[ubuntu]
+ub1 ansible_host=
+
+
+[redhat]
+rh1 ansible_host=
