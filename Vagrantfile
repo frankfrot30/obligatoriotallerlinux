@@ -63,6 +63,12 @@ public_key = File.exist?(PUBLIC_KEY) ? File.read(PUBLIC_KEY).strip : nil
 
 Vagrant.configure("2") do |config|
 
+  # Por defecto el mount vboxsf de /vagrant queda "world writable", y por eso
+  # Ansible ignora ansible.cfg con el warning "world writable directory".
+  # Con dmode/fmode explícitos deja de serlo (dueño con permiso de escritura,
+  # el resto solo lectura), así ansible.cfg se carga normalmente.
+  config.vm.synced_folder ".", "/vagrant", mount_options: ["dmode=755", "fmode=644"]
+
   [["ub1", "ubuntu/jammy64", UBUNTU_IP, 1024, 1],
    ["rh1", "generic/rocky9", REDHAT_IP, 2048, 2]].each do |name, box, ip, memory, cpus|
     config.vm.define name do |node|
