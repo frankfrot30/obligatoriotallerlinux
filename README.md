@@ -102,9 +102,10 @@ Para reaplicar los playbooks después de editarlos: `vagrant provision`. Para en
 
 ## Opción B: servidores propios (VMs existentes, cloud, on-prem, etc.)
 
-1. Contar con los dos servidores (uno Ubuntu, uno familia Red Hat), cada uno con un usuario `sysadmin` no-root con permisos de administrador.
-2. Copiar tu clave pública a cada servidor: `ssh-copy-id sysadmin@servidor_remoto`
-3. Copiar `inventory/hosts.yml.example` a `inventory/hosts.yml` (no existe en el repo, se genera) y completar las IPs:
+1. Tener un control node — un Linux (puede ser tu propia máquina, otro servidor, una VM) con Ansible instalado y este repo clonado ahí (ver "Prerrequisitos" más arriba). Los comandos de esta sección se corren desde ese control node, no desde `ub1`/`rh1`.
+2. Contar con los dos servidores destino (uno Ubuntu, uno familia Red Hat), cada uno con un usuario `sysadmin` no-root con permisos de administrador.
+3. Copiar tu clave pública a cada servidor: `ssh-copy-id sysadmin@servidor_remoto`
+4. Copiar `inventory/hosts.yml.example` a `inventory/hosts.yml` (no existe en el repo, se genera) y completar las IPs:
 
    ```bash
    cp inventory/hosts.yml.example inventory/hosts.yml
@@ -118,7 +119,7 @@ Para reaplicar los playbooks después de editarlos: `vagrant provision`. Para en
    rh1 ansible_host=<ip_del_servidor_redhat>
    ```
 
-4. Generar `playbooks/group_vars/all/vault.yml` (no existe en el repo, se genera; ver "Variables parametrizables"):
+5. Generar `playbooks/group_vars/all/vault.yml` (no existe en el repo, se genera; ver "Variables parametrizables"):
 
    ```bash
    cp playbooks/vault_defaults.yml playbooks/group_vars/all/vault.yml
