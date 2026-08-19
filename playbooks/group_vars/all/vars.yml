@@ -1,0 +1,21 @@
+---
+ansible_user: sysadmin
+
+# Tomcat / la app
+tomcat_version: 9.0.121 # checkear última versión disponible de tomcat
+tomcat_port: 8080
+app_dir: /opt/tomcat/webapps
+config_dir: /opt/config
+
+# Base de datos
+db_name: todo
+db_user: prueba
+mysql_port: 3306
+
+# IP del servidor de la app (redhat). Se usa para que MariaDB solo acepte
+# conexiones del usuario de la app desde ese servidor (mysql_user host + ufw).
+app_server_ip: "{{ hostvars[groups['redhat'][0]]['ansible_host'] }}"
+
+# Secretos: ver playbooks/group_vars/vault.yml (encriptado con ansible-vault)
+mysql_root_password: "{{ vault_mysql_root_password }}"
+db_password: "{{ vault_db_password }}"

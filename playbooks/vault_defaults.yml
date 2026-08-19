@@ -1,0 +1,16 @@
+---
+# Template de credenciales, trackeado por git en texto plano (editá los
+# valores acá). Esto NO lo lee Ansible directamente: es la fuente desde la
+# que se genera playbooks/group_vars/all/vault.yml (que sí lee Ansible),
+# gitignored a propósito para poder encriptarlo localmente sin arriesgarse
+# a commitear una versión encriptada con una password que nadie más tiene.
+#
+# - Con la Opción A (Vagrant): "vagrant up" copia este archivo a
+#   group_vars/all/vault.yml y lo encripta solo, con una vault-password
+#   generada localmente en .vault_pass.txt. No hace falta tocar nada.
+# - Con la Opción B (servidores propios): copiá este archivo a mano a
+#   playbooks/group_vars/all/vault.yml antes de correr los playbooks (y
+#   encriptalo si querés, con ansible-vault).
+
+vault_mysql_root_password: "AppM2023."
+vault_db_password: "prueba2024"

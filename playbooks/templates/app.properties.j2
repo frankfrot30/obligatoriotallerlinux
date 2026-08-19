@@ -1,0 +1,4 @@
+tipoDB=mysql
+jdbcURL=jdbc:mysql://{{ hostvars[groups['ubuntu'][0]]['ansible_host'] }}:{{ mysql_port }}/{{ db_name }}
+jdbcUsername={{ db_user }}
+jdbcPassword={{ db_password }}

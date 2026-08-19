@@ -1,12 +1,8 @@
 ---
 - name: deployear java, tomcat y la aplicación
   hosts: redhat
-  user: sysadmin
   become: yes
   vars:
-    app_dir: /opt/tomcat/webapps
-    config_dir: /opt/config
-    tomcat_version: 9.0.93 #checkear última versión disponible de tomcat
     tomcat_version_splitted: "{{ tomcat_version.split('.') }}"
     tomcat_major_version: "{{ tomcat_version_splitted[0] }}"
     ansible_python_interpreter: auto_silent
@@ -97,9 +93,9 @@
       state: directory
 
   - name: Copiar archivo de configuración a la carpeta
-    ansible.builtin.copy:
-      src: ./files/app.properties
-      dest: '{{config_dir}}'
+    ansible.builtin.template:
+      src: ./templates/app.properties.j2
+      dest: '{{config_dir}}/app.properties'
 
   - name: Copiar app todo.war desde el controlador al servidor con tomcat
     ansible.builtin.copy:
@@ -113,9 +109,9 @@
       daemon_reload: true
       enabled: true
 
-  - name: Habilitar tráfico a través del puerto 8080 tomcat
+  - name: Habilitar tráfico a través del puerto de Tomcat
     ansible.posix.firewalld:
-      port: 8080/tcp
+      port: "{{ tomcat_port }}/tcp"
       permanent: true
       state: enabled
 
