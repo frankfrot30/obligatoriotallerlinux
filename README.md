@@ -7,12 +7,6 @@ Automatiza el despliegue de una aplicación ToDo con Ansible:
 
 La app queda accesible en `http://<ip_rh1>:8080/todo`. No hay ningún usuario precreado: la primera vez hay que ir a "Signup" y registrarse antes de poder loguearse (con un usuario que no existe, el login no tira error, simplemente no pasa nada).
 
-Pensado para que cualquiera pueda clonar el repo y usarlo sin coordinar nada con nadie: no hace falta pedirle ninguna contraseña a nadie, `vagrant up` deja todo funcionando (y con las credenciales encriptadas) solo.
-
-## Estado
-
-Validado de punta a punta con `vagrant up`: la app respondió `HTTP 200`, login/registro/agregar tarea probado en navegador. Playbooks parametrizados (nada hardcodeado, ver tabla más abajo) y acceso a la base de datos restringido a la IP del servidor de la app.
-
 ## Estructura del repositorio
 
 ```
